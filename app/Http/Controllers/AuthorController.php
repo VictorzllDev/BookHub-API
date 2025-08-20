@@ -42,7 +42,7 @@ class AuthorController extends Controller
     // return new PaginatedResource(AuthorResource::collection($authors));
 
     $validated = $request->validate([
-      'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+      'per_page' => ['sometimes', 'integer', 'min:1'],
       'q' => ['sometimes', 'string'],
       'sort' => ['sometimes', 'string'],
       'direction' => ['sometimes', 'string']
@@ -85,11 +85,10 @@ class AuthorController extends Controller
     //     'data' => new AuthorResource($author)
     // ], 201);
 
+    $author = Author::create($request->validated());
     return response()->json([
-      'message' => 'TODO: Implementar criação de autor',
-      'endpoint' => 'POST /api/authors',
-      'documentation' => 'Consulte docs/API_ENDPOINTS.md'
-    ], 501);
+      'data' => new AuthorResource($author)
+    ], 201);
   }
 
   /**
@@ -117,11 +116,10 @@ class AuthorController extends Controller
     //     'data' => new AuthorResource($author)
     // ]);
 
+    $author = Author::findOrFail($id);
     return response()->json([
-      'message' => 'TODO: Implementar busca de autor',
-      'endpoint' => "GET /api/authors/{$id}",
-      'documentation' => 'Consulte docs/API_ENDPOINTS.md'
-    ], 501);
+      'data' => new AuthorResource($author)
+    ]);
   }
 
   /**
@@ -153,11 +151,11 @@ class AuthorController extends Controller
     //     'data' => new AuthorResource($author)
     // ]);
 
+    $author = Author::findOrFail($id);
+    $author->update($request->validated());
     return response()->json([
-      'message' => 'TODO: Implementar atualização de autor',
-      'endpoint' => "PUT /api/authors/{$id}",
-      'documentation' => 'Consulte docs/API_ENDPOINTS.md'
-    ], 501);
+      'data' => new AuthorResource($author)
+    ]);
   }
 
   /**
@@ -197,12 +195,15 @@ class AuthorController extends Controller
     // $author->delete();
     // return response()->noContent(); // 204
 
-    return response()->json([
-      'message' => 'TODO: Implementar exclusão de autor com regra de negócio',
-      'endpoint' => "DELETE /api/authors/{$id}",
-      'documentation' => 'Consulte docs/BUSINESS_RULES.md',
-      'important' => 'Não esqueça da regra: não excluir autor com livros!'
-    ], 501);
+    $author = Author::findOrFail($id);
+    if ($author->books()->count() > 0) {
+      return response()->json([
+        'message' => 'Não é possível excluir autor que possui livros associados.',
+        'status' => 409
+      ], 409);
+    }
+    $author->delete();
+    return response()->noContent();
   }
 
   /**
@@ -235,10 +236,10 @@ class AuthorController extends Controller
     //
     // return new PaginatedResource(BookResource::collection($books));
 
-    return response()->json([
-      'message' => 'TODO: Implementar listagem de livros do autor',
-      'endpoint' => "GET /api/authors/{$id}/books",
-      'documentation' => 'Consulte docs/API_ENDPOINTS.md'
-    ], 501);
+    $author = Author::findOrFail($id);
+    $books = $author->books()
+      ->orderBy($request->sort ?? 'titulo')
+      ->paginate($request->per_page ?? 15);
+    return new PaginatedResource(BookResource::collection($books));
   }
 }
