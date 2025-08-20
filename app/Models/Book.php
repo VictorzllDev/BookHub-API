@@ -97,23 +97,23 @@ class Book extends Model
         if ($anoInicio) {
             $query->where('ano_publicacao', '>=', $anoInicio);
         }
-        
+
         if ($anoFim) {
             $query->where('ano_publicacao', '<=', $anoFim);
         }
-        
+
         return $query;
     }
 
     /**
      * Scope para ordenação
      */
-    public function scopeOrderBy($query, $field = 'titulo', $direction = 'asc')
+    public function scopeOrderByField($query, $field = 'titulo', $direction = 'asc')
     {
         $allowedFields = ['titulo', 'ano_publicacao', 'paginas', 'created_at', 'updated_at'];
         $field = in_array($field, $allowedFields) ? $field : 'titulo';
         $direction = in_array(strtolower($direction), ['asc', 'desc']) ? $direction : 'asc';
-        
+
         return $query->orderBy($field, $direction);
     }
 }
