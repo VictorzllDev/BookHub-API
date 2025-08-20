@@ -55,12 +55,13 @@ class Author extends Model
     /**
      * Scope para ordenação
      */
-    public function scopeOrderBy($query, $field = 'nome', $direction = 'asc')
+    public function scopeOrderByField($query, $field = 'nome', $direction = 'asc')
     {
         $allowedFields = ['nome', 'created_at', 'updated_at'];
         $field = in_array($field, $allowedFields) ? $field : 'nome';
         $direction = in_array(strtolower($direction), ['asc', 'desc']) ? $direction : 'asc';
-        
+
         return $query->orderBy($field, $direction);
     }
 }
+
