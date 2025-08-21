@@ -1,66 +1,87 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Sobre o Projeto
 
-## About Laravel
+Um CRUD simples desenvolvido em **Laravel 9** como tarefa acadêmica. O sistema gerencia um relacionamento básico entre Autores (Authors) e Livros (Books), demonstrando os conceitos fundamentais do framework, incluindo Eloquent ORM, migrations, seeders e controllers.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Quick Start
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Siga os passos abaixo para configurar e executar o projeto localmente.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Pré-requisitos
 
-## Learning Laravel
+Certifique-se de ter instalado em sua máquina:
+*   PHP 8.1+
+*   Composer 2.8+
+*   MySQL (ou Docker, se preferir usar o container fornecido)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. Clone o repositório
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+git clone https://github.com/VictorzllDev/CRUD-Laravel.git
+cd CRUD-Laravel
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Instale as dependências do PHP
 
-## Laravel Sponsors
+```bash
+composer install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### 3. Configure o Ambiente
 
-### Premium Partners
+Copie o arquivo de ambiente de exemplo e gere a chave única da aplicação:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Contributing
+### 4. Configure o Banco de Dados
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Escolha UMA das opções abaixo:**
 
-## Code of Conduct
+#### Opção A: Usando MySQL Local
+Edite o arquivo `.env` com as credenciais do seu próprio servidor MySQL.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Opção B: Usando Docker (MySQL em Container)
+Um arquivo `docker-compose.yaml` está disponível para subir um container MySQL.
 
-## Security Vulnerabilities
+1.  Inicie o container:
+    ```bash
+    docker-compose up -d
+    ```
+2.  Edite o arquivo `.env` para usar as configurações do container (verifique a porta e credenciais no arquivo `docker-compose.yaml`).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 5. Execute as Migrations e Seeders
 
-## License
+Este comando criará as tabelas no banco de dados e populará com dados iniciais para testes.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan migrate && php artisan db:seed
+```
+
+### 6. Inicie o Servidor de Desenvolvimento
+
+```bash
+php artisan serve
+```
+
+O aplicativo estará disponível em: **http://localhost:8000**
+
+---
+
+## 📋 Funcionalidades
+
+*   **CRUD de Autores (Authors)**: Criar, listar, visualizar, editar e excluir autores.
+*   **CRUD de Livros (Books)**: Criar, listar, visualizar, editar e excluir livros.
+*   **Relacionamento**: Cada livro está associado a um autor.
+*   **API Resource**: Endpoints JSON para integração.
+*   **Filtros e Ordenação**: As listagens de autores e livros possuem filtros e ordenação.
+
+## 🛠️ Tecnologias Utilizadas
+
+*   [Laravel 9](https://laravel.com/docs/9.x)
+*   PHP 8.4.11
+*   MySQL
+*   Docker (opcional)
