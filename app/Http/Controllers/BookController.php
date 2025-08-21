@@ -56,29 +56,40 @@ class BookController extends Controller
     //
     // return new PaginatedResource(BookResource::collection($books));
 
+    $validated = $request->validate([
+      'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+      'q' => ['sometimes', 'string'],
+      'sort' => ['sometimes', 'string'],
+      'direction' => ['sometimes', 'string'],
+      'author_id' => ['sometimes', 'integer'],
+      'disponivel' => ['sometimes', 'boolean'],
+      'ano_de' => ['sometimes', 'integer'],
+      'ano_ate' => ['sometimes', 'integer'],
+    ]);
 
-    $sortableColumns = ['titulo', 'ano_publicacao', 'created_at', 'updated_at'];
-    $sortColumn = in_array($request->sort, $sortableColumns) ? $request->sort : 'titulo';
-    $sortOrder = $request->sort_order === 'desc' ? 'desc' : 'asc';
 
-    $books = Book::with('author')
-      ->when($request->filled('q'), function ($query, $term) {
-        $query->search($term);
-      })
-      ->when($request->filled('author_id'), function ($query, $authorId) {
-        $query->byAuthor($authorId);
-      })
-      ->when($request->filled('disponivel'), function ($query) use ($request) {
-        $query->byAvailability($request->boolean('disponivel'));
-      })
-      ->when($request->filled('ano_de') || $request->filled('ano_ate'), function ($query) use ($request) {
-        $query->byYearRange($request->ano_de, $request->ano_ate);
-      })
-      ->orderByField($sortColumn, $sortOrder)
-      ->paginate($request->per_page ?? 15)
-      ->appends($request->except('page')); // Mantém parâmetros na paginação
+    $query = Book::with('author');
 
-    return BookResource::collection($books);
+    if(isset($validated['q'])) {
+      $query->search($validated['q']);
+    }
+
+    if(isset($validated['author_id'])) {
+      $query->byAuthor($validated['author_id']);
+    }
+
+    if(isset($validated['disponivel'])) {
+      $query->byAvailability($validated['disponivel']);
+    }
+
+    if(isset($validated['ano_de']) || isset($validated['ano_ate'])) {
+      $query->byYearRange($validated['ano_de'] ?? null, $validated['ano_ate'] ?? null);
+    }
+
+    $query->orderByField($validated['sort'] ?? 'titulo', $validated['direction'] ?? 'asc');
+
+    $books = $query->paginate($validated['per_page'] ?? 15);
+    return response()->json($books);
   }
 
   /**

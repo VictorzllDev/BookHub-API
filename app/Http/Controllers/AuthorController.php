@@ -42,7 +42,7 @@ class AuthorController extends Controller
     // return new PaginatedResource(AuthorResource::collection($authors));
 
     $validated = $request->validate([
-      'per_page' => ['sometimes', 'integer', 'min:1'],
+      'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
       'q' => ['sometimes', 'string'],
       'sort' => ['sometimes', 'string'],
       'direction' => ['sometimes', 'string']
@@ -51,11 +51,16 @@ class AuthorController extends Controller
     $perPage = $validated['per_page'] ?? 15;
     $searchTerm = $validated['q'] ?? null;
 
-    $query = Author::search($searchTerm);
+    $query = Author::query();
+
+    if($searchTerm) {
+      $query = $query->search($searchTerm);
+    }
+
     $query->orderByField($validated['sort'] ?? 'nome', $validated['direction'] ?? 'asc');
 
     $authors = $query->paginate($perPage);
-    return new PaginatedResource(AuthorResource::collection($authors));
+    return response()->json($authors);
   }
 
   /**
